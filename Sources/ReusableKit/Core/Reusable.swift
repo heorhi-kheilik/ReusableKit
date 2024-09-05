@@ -24,3 +24,6 @@ public extension Reusable {
     }
 
 }
+
+extension UITableViewCell: Reusable { }
+extension UICollectionViewCell: Reusable { }
