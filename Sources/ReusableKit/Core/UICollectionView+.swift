@@ -19,9 +19,18 @@ public extension UICollectionView {
 
     func dequeueReusableCell<Cell: UICollectionViewCell & Reusable>(
         _ cellType: Cell.Type,
-        for indexPath: IndexPath
-    ) -> Cell? {
-        dequeueReusableCell(withReuseIdentifier: cellType.reuseIdentifier, for: indexPath) as? Cell
+        for indexPath: IndexPath,
+        configure: (inout Cell) -> Void
+    ) -> UICollectionViewCell {
+        guard var cell = dequeueReusableCell(
+            withReuseIdentifier: cellType.reuseIdentifier,
+            for: indexPath
+        ) as? Cell else {
+            assertionFailure("Failed to dequeue \(String(describing: Cell.self))")
+            return UICollectionViewCell()
+        }
+        configure(&cell)
+        return cell
     }
 
 }
