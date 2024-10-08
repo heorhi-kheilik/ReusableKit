@@ -17,6 +17,14 @@ public extension UICollectionView {
         register(cellType.nib, forCellWithReuseIdentifier: cellType.reuseIdentifier)
     }
 
+    func register<View: UICollectionReusableView & Reusable>(_ viewType: View.Type, ofKind kind: String) {
+        register(viewType, forSupplementaryViewOfKind: kind, withReuseIdentifier: viewType.reuseIdentifier)
+    }
+
+    func register<View: UICollectionReusableView & Reusable & NibInstantiatable>(_ viewType: View.Type, ofKind kind: String) {
+        register(viewType.nib, forSupplementaryViewOfKind: kind, withReuseIdentifier: viewType.reuseIdentifier)
+    }
+
     func dequeueReusableCell<Cell: UICollectionViewCell & Reusable>(
         _ cellType: Cell.Type,
         for indexPath: IndexPath,
@@ -31,6 +39,24 @@ public extension UICollectionView {
         }
         configure(&cell)
         return cell
+    }
+
+    func dequeueReusableSupplementaryView<View: UICollectionReusableView & Reusable>(
+        _ viewType: View.Type,
+        ofKind kind: String,
+        for indexPath: IndexPath,
+        configure: (inout View) -> Void
+    ) -> UICollectionReusableView {
+        guard var view = dequeueReusableSupplementaryView(
+            ofKind: kind,
+            withReuseIdentifier: viewType.reuseIdentifier,
+            for: indexPath
+        ) as? View else {
+            assertionFailure("Failed to dequeue \(String(describing: View.self))")
+            return UICollectionReusableView()
+        }
+        configure(&view)
+        return view
     }
 
 }
